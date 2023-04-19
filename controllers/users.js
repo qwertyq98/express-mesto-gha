@@ -19,7 +19,7 @@ module.exports.getUserById = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.find({})
-    .then(users => res.status(201).send({ data: users }))
+    .then(users => res.status(200).send({ data: users }))
     .catch((err) => checkError(err, res));
 };
 
