@@ -6,7 +6,6 @@ module.exports.createCard = (req, res ) => {
 
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .orFail()
     .then(card => res.status(201).send({ data: card }))
     .catch((err) => checkError(err, res));
 };
@@ -19,7 +18,6 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail()
     .then(card => {
       res.status(200).send({ data: card });
     })
@@ -32,7 +30,6 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
-    .orFail()
     .then(likes => res.status(201).send({ data: likes }))
     .catch((err) => checkError(err, res));
 }
