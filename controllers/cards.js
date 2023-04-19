@@ -6,20 +6,22 @@ module.exports.createCard = (req, res ) => {
 
   const owner = req.user._id;
   Card.create({ name, link, owner })
+    .orFail()
     .then(card => res.status(201).send({ data: card }))
     .catch((err) => checkError(err, res));
 };
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then(cards => res.status(201).send({ data: cards }))
+    .then(cards => res.status(200).send({ data: cards }))
     .catch((err) => checkError(err, res));
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail()
     .then(card => {
-      res.status(201).send({ data: card });
+      res.status(200).send({ data: card });
     })
     .catch((err) => checkError(err, res));
 };
@@ -30,8 +32,9 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
-  .then(likes => res.status(201).send({ data: likes }))
-  .catch((err) => checkError(err, res));
+    .orFail()
+    .then(likes => res.status(201).send({ data: likes }))
+    .catch((err) => checkError(err, res));
 }
 
 module.exports.dislikeCard = (req, res ) => {
@@ -40,7 +43,7 @@ module.exports.dislikeCard = (req, res ) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
-  .then(likes => res.status(201).send({ data: likes }))
+  .then(likes => res.status(200).send({ data: likes }))
   .catch((err) => checkError(err, res));
 }
 
