@@ -11,7 +11,11 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail()
+    .orFail(() => {
+      const err = new Error('Пользователь не существует');
+      err.name = 'NotFoundError';
+      throw err;
+    })
     .then(user => {
       if(user) {
         res.send({ data: user });
@@ -31,7 +35,11 @@ module.exports.updateUser = (req, res) => {
   const userId = req.user._id;
 
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .orFail()
+    .orFail(() => {
+      const err = new Error('Пользователь не существует');
+      err.name = 'NotFoundError';
+      throw err;
+    })
     .then(user => res.status(200).send({ data: user }))
     .catch((err) => checkError(err, res));
 };
