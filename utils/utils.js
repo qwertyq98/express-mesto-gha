@@ -4,7 +4,7 @@ const DEFAULT_ERROR_CODE = 500;
 
 module.exports.checkError = (err, res) => {
   if (err.name === 'ValidationError') {
-    return res.status(VALIDATION_ERROR_CODE).send({ message: 'Переданы некоректные данные' });
+    return res.status(VALIDATION_ERROR_CODE).send({ message: 'Переданы некорpектные данные' });
   } if (err.name === 'NotFoundError') {
     return res.status(NOTFOUND_ERROR_CODE).send({ message: err.message });
   } if (err.name === 'CastError') {
