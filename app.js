@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, MONGODB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const app = express();
 
-mongoose.connect(process.env.MONGO_DB_CONNECTION);
+mongoose.connect(MONGODB_URL);
 
 app.use((req, res, next) => {
   req.user = {
