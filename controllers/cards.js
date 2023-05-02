@@ -17,18 +17,22 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(() => {
       const err = new Error('Карточка не найдена');
-        err.name = 'NotFoundError';
-        throw err;
+      err.name = 'NotFoundError';
+      throw err;
     })
     .then(card => {
-      if (card) {
-        res.status(200).send({ data: card });
+      if (card.owner.toString() !== req.user._id) {
+        return res.status(403).send({message: 'Нельзя удалить карточку другого пользователя'});
       }
+      Card.findByIdAndDelete(req.params.cardId)
+        .then(card => {
+          res.status(200).send({ data: card });
+        })
+        .catch((err) => checkError(err, res));
     })
-    .catch((err) => checkError(err, res));
 };
 
 module.exports.likeCard = (req, res) => {
