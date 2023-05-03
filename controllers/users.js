@@ -81,6 +81,6 @@ module.exports.login = (req, res, next) => {
         .send({ email });
     })
     .catch((err) => {
-      next(UnauthorizedError(err.message));
+      next(new UnauthorizedError(err.message));
     });
 };
