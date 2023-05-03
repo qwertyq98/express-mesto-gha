@@ -33,9 +33,7 @@ module.exports.getUserMeById = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не существует');
     })
-    .then(user => {
-      res.send({ data: user });
-    })
+    .then(users => res.status(200).send({ data: users }))
     .catch(next);
 };
 

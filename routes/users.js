@@ -3,17 +3,13 @@ const userRouter = require('express').Router();
 const { LINK_VALIDATOR } = require('../utils/constants');
 const { celebrate, Joi } = require('celebrate');
 
-userRouter.get('/me', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().hex().required().length(24),
-  }),
-}), getUserMeById);
+userRouter.get('/me', getUserMeById);
 
 userRouter.get('/', getUser);
 
 userRouter.get('/:userId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().required().length(24),
+    userId: Joi.string().hex().length(24).required(),
   }),
 }), getUserById);
 
