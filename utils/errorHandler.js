@@ -35,7 +35,8 @@ function errorHandler(err, req, res, next) {
     });
   }
 
-  return res.status(500).send('Ошибка на сервере');
+  res.status(500).send('Ошибка на сервере');
+  return next();
 }
 
 module.exports = errorHandler;
