@@ -76,9 +76,11 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true
         })
-        .send({ email });
+        .send({ email })
+        .end();
     })
-    .catch((err) => {
-      next(new UnauthorizedError(err.message));
-    });
+    .catch(next);
+    // .catch((err) => {
+    //   next(new UnauthorizedError(err.message));
+    // });
 };

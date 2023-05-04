@@ -15,12 +15,13 @@ const {
 const app = express();
 const { celebrate, Joi, errors } = require('celebrate');
 const { LINK_VALIDATOR } = require('./utils/constants');
+const NotFoundError = require('./errors/NotFoundError');
 
 mongoose.connect(MONGODB_URL);
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(express.json());
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -42,8 +43,8 @@ app.use(auth);
 
 app.use('/cards', cardRouter);
 app.use('/users', userRouter);
-app.use('*', ({ res }) => {
-  return res.status(404).send({ message: 'Запрошен несуществующий роут' });
+app.use('*', () => {
+  throw new NotFoundError('Запрошен несуществующий роут');
 });
 
 app.use(errors());

@@ -2,19 +2,19 @@ const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
-module.exports.createCard = (req, res ) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then(card => res.status(201).send({ data: card }))
-    .catch((err) => checkError(err, res));
+    .catch(next);
 };
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then(cards => res.status(200).send({ data: cards }))
-    .catch((err) => checkError(err, res));
+    .catch(next);
 };
 
 module.exports.deleteCard = (req, res, next) => {
@@ -26,7 +26,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (card.owner.toString() !== req.user._id) {
         throw new ForbiddenError('Нельзя удалить карточку другого пользователя');
       }
-      Card.findByIdAndDelete(req.params.cardId)
+      card.deleteOne()
         .then(card => {
           res.status(200).send({ data: card });
         })
@@ -46,7 +46,7 @@ module.exports.likeCard = (req, res, next) => {
     })
     .then(likes => {
       if(likes) {
-        res.status(201).send({ data: likes })
+        res.status(200).send({ data: likes })
       }
     })
     .catch(next);
