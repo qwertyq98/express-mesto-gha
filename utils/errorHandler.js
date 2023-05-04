@@ -6,14 +6,14 @@ const {
 
 const BaseError = require('../errors/BaseError');
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res) {
   if (err instanceof BaseError) {
     return res.status(err.statusCode).send({ message: err.message });
   }
 
   if (err instanceof ValidationError) {
     return res.status(400).send({
-      message: `Переданы некорректные данные`,
+      message: 'Переданы некорректные данные',
     });
   }
 
@@ -35,7 +35,7 @@ function errorHandler(err, req, res, next) {
     });
   }
 
-  res.status(500).send({ message: err.message || "Ошибка на сервере" });
+  return res.status(500).send('Ошибка на сервере');
 }
 
 module.exports = errorHandler;

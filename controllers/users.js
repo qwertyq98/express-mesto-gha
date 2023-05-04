@@ -1,15 +1,19 @@
-const User = require('../models/user');
+const { NODE_ENV, SECRET_KEY } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   bcrypt.hash(password, 10)
-    .then(hash => User.create({ name, about, avatar, email, password: hash }))
-    .then(user => res.status(201).send({ data: user }))
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch(next);
 };
 
@@ -18,8 +22,8 @@ module.exports.getUserById = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не существует');
     })
-    .then(user => {
-      if(user) {
+    .then((user) => {
+      if (user) {
         res.send({ data: user });
       }
     })
@@ -33,13 +37,13 @@ module.exports.getUserMeById = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не существует');
     })
-    .then(users => res.status(200).send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
-    .then(users => res.status(200).send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch(next);
 };
 
@@ -51,7 +55,7 @@ module.exports.updateUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не существует');
     })
-    .then(user => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(next);
 };
 
@@ -60,7 +64,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
   const userId = req.user._id;
 
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .then(user => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(next);
 };
 
@@ -69,18 +73,18 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? SECRET_KEY : 'super-strong-secret', { expiresIn: '7d' });
       res
         .cookie('jwt', token, {
           maxAge: 3600000,
           httpOnly: true,
-          sameSite: true
+          sameSite: true,
         })
         .send({ email })
         .end();
     })
     .catch(next);
-    // .catch((err) => {
-    //   next(new UnauthorizedError(err.message));
-    // });
+  // .catch((err) => {
+  //   next(new UnauthorizedError(err.message));
+  // });
 };

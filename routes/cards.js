@@ -1,6 +1,8 @@
-const { createCard, getCards, deleteCard, likeCard, dislikeCard } = require('../controllers/cards');
 const cardRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const {
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
+} = require('../controllers/cards');
 const { LINK_VALIDATOR } = require('../utils/constants');
 
 cardRouter.post('/', celebrate({
