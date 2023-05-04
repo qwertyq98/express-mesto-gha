@@ -1,4 +1,4 @@
-const { NODE_ENV, SECRET_KEY } = process.env;
+const { SECRET_KEY = 'super-strong-secret' } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -73,7 +73,7 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? SECRET_KEY : 'super-strong-secret', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
       res
         .cookie('jwt', token, {
           maxAge: 3600000,
@@ -84,7 +84,4 @@ module.exports.login = (req, res, next) => {
         .end();
     })
     .catch(next);
-  // .catch((err) => {
-  //   next(new UnauthorizedError(err.message));
-  // });
 };

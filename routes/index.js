@@ -6,12 +6,13 @@ const signinRouter = require('./signin');
 const auth = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
 
-indexRouter.use(auth);
-
-indexRouter.use('/cards', auth, cardRouter);
-indexRouter.use('/users', auth, userRouter);
 indexRouter.use('/signup', signupRouter);
 indexRouter.use('/signin', signinRouter);
+
+indexRouter.use(auth);
+
+indexRouter.use('/cards', cardRouter);
+indexRouter.use('/users', userRouter);
 indexRouter.use('*', (req, res, next) => {
   next(new NotFoundError('Запрошен несуществующий роут'));
 });
