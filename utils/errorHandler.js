@@ -6,7 +6,7 @@ const {
 
 const BaseError = require('../errors/BaseError');
 
-function errorHandler(err, req, res) {
+function errorHandler(err, req, res, next) {
   if (err instanceof BaseError) {
     return res.status(err.statusCode).send({ message: err.message });
   }
