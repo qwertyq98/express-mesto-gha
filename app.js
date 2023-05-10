@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const indexRouter = require('./routes/index');
 const errorHandler = require('./utils/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const {
   PORT = 3000,
@@ -16,10 +16,14 @@ const app = express();
 mongoose.connect(MONGODB_URL);
 
 app.use(cookieParser());
-app.use(bodyParser.json());
 app.use(express.json());
 
+app.use(requestLogger);
+
 app.use('/', indexRouter);
+
+app.use(errorLogger);
+
 app.use(errors());
 app.use(errorHandler);
 
